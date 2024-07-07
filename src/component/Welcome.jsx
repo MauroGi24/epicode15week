@@ -1,20 +1,16 @@
+import { useState } from 'react';
 import Alert from 'react-bootstrap/Alert';
-import { Container } from 'react-bootstrap';
 
 function Welcome() {
-  return (
-    <>
-      {[
-        'secondary',
-      ].map((variant) => (
-        <Container className='mb-5'>
-        <Alert className='text-center' key={variant} variant={variant}>
-          Welcome To Epic Books 
-        </Alert>
-        </Container>
-      ))}
-    </>
-  );
+  const [show, setShow] = useState(true);
+
+  if (show) {
+    return (
+      <Alert variant="danger" onClose={() => setShow(false)} dismissible>
+        <Alert.Heading className='text-center'>Welcome To Epic Books</Alert.Heading>
+      </Alert>
+    );
+  }
 }
 
 export default Welcome;

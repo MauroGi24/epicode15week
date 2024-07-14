@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
+import ModalMessage from "./ModalMessage";
+
 
 function AddComment({ asin, loadComments }) {
   const initialFormState = {
@@ -9,6 +11,13 @@ function AddComment({ asin, loadComments }) {
   };
 
   const [formValue, setFormValue] = useState(initialFormState);
+  const [alert, setAlert] = useState(null)
+  const [modal, setModal] = useState(false)
+
+  const closeModal = () => {
+    setModal(false)
+  }
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormValue({
@@ -34,16 +43,20 @@ function AddComment({ asin, loadComments }) {
       if (response.ok) {
         loadComments();
         setFormValue(initialFormState);
-        alert("Comment successfully added!");
+        setAlert('Comment successfully added!');
+        setModal(!false)
       } else {
-        alert("Unable to enter comment! Check the fields again");
+        setAlert('Unable to add the comment!');
+        setModal(!false)
       }
     } catch (error) {
-      alert("Generic Error! Try Later.");
+      setAlert('Generic Error! Try Later.');
+      setModal(!false)
     }
   };
 
   return (
+    <>
     <div className="d-flex justify-content-center">
       <Form>
         <Form.Group className="mb-3" controlId="rate">
@@ -80,6 +93,8 @@ function AddComment({ asin, loadComments }) {
         </div>
       </Form>
     </div>
+    <ModalMessage alert={alert} modal={modal} closeModal={() => closeModal()}/>
+    </>
   );
 }
 

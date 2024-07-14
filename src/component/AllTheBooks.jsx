@@ -1,41 +1,35 @@
 import SingleBook from "./SingleBook";
-import { books } from "../data/books";
-import Row from "react-bootstrap/Row";
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
+import {Row, Container, Col} from "react-bootstrap/";
 import { useState } from "react";
+import CommentArea from "./CommentArea";
 
-function AllTheBooks() {
-  const [search, setSearch] = useState('')
-  const [filterBook, setFilterBook] = useState(books)
-  const filter = (searchValue) => {
-    setSearch(searchValue.target.value)
-    const filtered = books.filter((element) => {
-      return search.toLocaleLowerCase()===''? element : element.title.toLocaleLowerCase().includes(searchValue.target.value.toLocaleLowerCase())
-    })
-    setFilterBook(filtered)
+
+function AllTheBooks({filterBook}) {
+  const [bookSelected, setBookSelected] = useState(null);
+  const selected = (asin) => {
+    if (bookSelected === asin) {
+      setBookSelected(null)
+    } else {
+    setBookSelected(asin);
   }
-
+  };
 
   return (
-    <>   
-    <Container className="mb-5">
-    <InputGroup className="mb-5">
-        <InputGroup.Text id="inputGroup-sizing-default">
-          Search
-        </InputGroup.Text>
-        <Form.Control onChange={filter}
-          placeholder="Look for your book"
-          aria-label="Default"
-          aria-describedby="inputGroup-sizing-default"
-        />
-      </InputGroup>
-      <Row className='gy-4'>
-        {filterBook.map((element) => (
-          <SingleBook book={element} />
-        ))}
-      </Row>
+    <>
+      <Container className="mb-5">
+        <Row>
+          <Col md={8} >
+          <Row className="gy-4">
+          {filterBook.map((element) => (
+            <SingleBook book={element} bookSelected={bookSelected} selected={selected}  />
+          ))}
+          </Row>
+          </Col>
+          <Col md= {4}>
+          {bookSelected && <CommentArea asin={bookSelected}/>}
+          </Col>
+        </Row>
+        
       </Container>
     </>
   );

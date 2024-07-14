@@ -1,25 +1,28 @@
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
-import "./css/style.css"
-import { useState } from "react";
+import "./css/style.css";
+import {Col, Card} from "react-bootstrap";
+import { useContext, useState } from "react";
+import { ThemeContext } from "../context/ThemeContextProvider";
 
-function SingleBook(book) {
-  const [bookSelected, setBookSelected] = useState(false)
-  const selected = () => {
-    setBookSelected(!bookSelected)
-  }
+function SingleBook({book, selected, bookSelected}) {
+  const {theme} = useContext(ThemeContext)
+  
+
   return (
     <>
-      <Col  sm={12} md={4} lg={2} className={bookSelected ? 'borderRed' : ''} onClick={selected}>
-        <Card className= 'h-100 bookCard'>
-          <Card.Img variant="top" src={book.book.img} />
+      <Col sm={12} md={4} lg={3}>
+        <Card className={theme === 'light'? 'h-100 bookCard' : 'bg-dark h-100 bookCard'}>
+          <Card.Img
+            className={bookSelected===book.asin ? "borderRed" : ""}
+            onClick={() => selected(book.asin) }
+            variant="top"
+            src={book.img}
+          />
           <Card.Body className="d-flex flex-column justify-content-between">
             <div>
-            <Card.Title className="fs-6">{book.book.title}</Card.Title>
-            <Card.Text className="text-center">{book.book.price} €</Card.Text>
+              <Card.Title className="fs-6">{book.title}</Card.Title>
+              <Card.Text className="text-center">{book.price} €</Card.Text>
             </div>
-            <Button>Sfoglia il libro</Button>
+            
           </Card.Body>
         </Card>
       </Col>

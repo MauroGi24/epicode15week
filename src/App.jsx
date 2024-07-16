@@ -5,6 +5,8 @@ import Welcome from './component/Welcome';
 import { useState } from 'react';
 import { books } from "./data/books";
 import { ThemeContextProvider } from './context/ThemeContextProvider';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import NotFound from './pages/NotFound';
 
 function App() {
   const [search, setSearch] = useState("");
@@ -22,14 +24,20 @@ function App() {
   };
 
   return (
+    <BrowserRouter>
     <ThemeContextProvider>
       <div>
       <MyNav filter ={filter} />
       <Welcome/>
-      <AllTheBooks filterBook={filterBook} />
+      <Routes>
+        <Route path='/' element={<AllTheBooks filterBook={filterBook} />}/>    
+        <Route path='/pagenotfound' element={<NotFound />}/>    
+        <Route path='/*' element={<Navigate to='/pagenotfound'/>}/>    
+      </Routes>
       <MyFooter/>
       </div>
     </ThemeContextProvider>
+    </BrowserRouter>
     
 
   );

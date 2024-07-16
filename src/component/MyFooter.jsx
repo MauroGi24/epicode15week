@@ -14,7 +14,7 @@ function MyFooter() {
           P.I: 1234567890
         </Col>
         <Col xs={12} sm={4} className="text-center">
-          Reg. imprese Palermo nr. 05329570963 - R.E.A. MI 1813088
+          Reg. imprese Milano nr. 05329570963 - R.E.A. MI 1813088
         </Col>
       </Row>
     </Container>

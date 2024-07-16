@@ -26,7 +26,7 @@ function SingleComment({ comments, loadComments }) {
 
       if (response.ok) {
         setAlert("Comment successfully deleted!");
-        setModal(!false);
+        setModal(!false) 
         loadComments()      
         
       } else {

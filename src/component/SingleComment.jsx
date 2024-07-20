@@ -1,15 +1,10 @@
-import { ListGroup, Button } from "react-bootstrap/";
-import { useEffect, useState } from "react";
-import ModalMessage from "./ModalMessage";
+import { ModalContext } from "../context/ModalContextProvider";
+import { ListGroup, Button, Form } from "react-bootstrap/";
+import { useContext, useState, useEffect } from "react";
 
 function SingleComment({ comments, loadComments }) {
-  const [alert, setAlert] = useState(null);
-  const [modal, setModal] = useState(false);
+  const { setAlert, setModal } = useContext(ModalContext);
 
-  const closeModal = () => {
-    setModal(false);
-  };
-  
   const deleteComment = async () => {
     try {
       const response = await fetch(
@@ -26,9 +21,8 @@ function SingleComment({ comments, loadComments }) {
 
       if (response.ok) {
         setAlert("Comment successfully deleted!");
-        setModal(!false) 
-        loadComments()      
-        
+        setModal(!false);
+        loadComments();
       } else {
         setAlert("Unable to delete the comment!");
         setModal(!false);
@@ -38,20 +32,103 @@ function SingleComment({ comments, loadComments }) {
       setModal(!false);
     }
   };
- 
 
-  // const [editingComment, setEditingComment] = useState({})
-  // const [formValue, setFormValue] = useState({})
+  const [editingComment, setEditingComment] = useState(false);
+  const [formValue, setFormValue] = useState({});
 
-  // function EditComment({comments, loadComments}) {
+  const editComment = () => {
+    setEditingComment(!editingComment);
+  };
 
-  //  }
+  useEffect(() => {
+    const initialFormValue = {
+      rate: comments.rate,
+      comment: comments.comment,
+      id: comments.elementId,
+    };
+    setFormValue(initialFormValue);
+  }, [comments]);
+
+  const handleEdit = async () => {
+    if(formValue.rate > 5 || formValue.rate < 1 || formValue.comment === ""){
+        setAlert("Insert a number between 1 and 5; All fields are required.")
+        setModal(!false)
+        return
+    }
+    try {
+      const response = await fetch(
+        `https://striveschool-api.herokuapp.com/api/comments/${comments._id}`,
+        {
+          headers: {
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjhkYjRhZTFiNWY4ODAwMTU0OTU5NTAiLCJpYXQiOjE3MjA1NjI4NjIsImV4cCI6MTcyMTc3MjQ2Mn0.4KLotdLN6d5_DTdhHuJU115yFpGIVKGN5X2kFkT9GMw",
+            "Content-Type": "application/json",
+          },
+          method: "PUT",
+          body: JSON.stringify(formValue),
+        }
+      );
+      if (response.ok) {
+        setAlert("Comment successfully edited!");
+        setModal(!false);
+        setEditingComment(false);
+        loadComments();
+      } else {
+        setAlert("Unable to edit the comment!");
+        setModal(!false);
+      }
+    } catch (error) {
+      setAlert("General Error! Try Later");
+      setModal(!false);
+    }
+  };
+
+  const handleChange = (event) => {
+    setFormValue({ ...formValue, [event.target.name]: event.target.value });
+  };
 
   return (
     <>
-      <ListGroup className="mb-3">
-        <ListGroup.Item>Score: {comments.rate}</ListGroup.Item>
-        <ListGroup.Item> Review: {comments.comment}</ListGroup.Item>
+      <ListGroup data-testid="single-comment" className="mb-3">
+        <ListGroup.Item>
+          Score:{" "}
+          {editingComment ? (
+            <Form.Group className="mb-3" controlId="rate">
+              <Form.Label>Rate from 1 to 5</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Rate"
+                min="1"
+                max="5"
+                name="rate"
+                value={formValue.rate}
+                required
+                onChange={handleChange}
+              />
+            </Form.Group>
+          ) : (
+            comments.rate
+          )}
+        </ListGroup.Item>
+        <ListGroup.Item>
+          {" "}
+          Review:{" "}
+          {editingComment ? (
+            <Form.Group className="mb-3" controlId="comment">
+              <Form.Label>Your Comment</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="comment"
+                value={formValue.comment}
+                required
+                onChange={handleChange}
+              />
+            </Form.Group>
+          ) : (
+            comments.comment
+          )}
+        </ListGroup.Item>
         <ListGroup.Item> Author: {comments.author} </ListGroup.Item>
       </ListGroup>
       <div className="d-flex justify-content-center">
@@ -72,7 +149,13 @@ function SingleComment({ comments, loadComments }) {
             <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
           </svg>
         </Button>
-        <Button type="button" className="btn btn-success mb-2 ms-3">
+        <Button
+          onClick={() => {
+            editingComment ? handleEdit() : editComment();
+          }}
+          type="button"
+          className="btn btn-success mb-2 ms-3"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -85,11 +168,6 @@ function SingleComment({ comments, loadComments }) {
           </svg>
         </Button>
       </div>
-      <ModalMessage
-        alert={alert}
-        modal={modal}
-        closeModal={() => closeModal()}
-      />
     </>
   );
 }

@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { ModalContext } from "../context/ModalContextProvider";
 import { Button, Form } from "react-bootstrap";
-import ModalMessage from "./ModalMessage";
-
+import { useState, useContext } from "react";
 
 function AddComment({ asin, loadComments }) {
   const initialFormState = {
@@ -11,12 +10,6 @@ function AddComment({ asin, loadComments }) {
   };
 
   const [formValue, setFormValue] = useState(initialFormState);
-  const [alert, setAlert] = useState(null)
-  const [modal, setModal] = useState(false)
-
-  const closeModal = () => {
-    setModal(false)
-  }
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -25,6 +18,8 @@ function AddComment({ asin, loadComments }) {
       [name]: value,
     });
   };
+
+  const {setAlert, setModal} = useContext(ModalContext)
 
   const saveComment = async () => {
     try {
@@ -40,11 +35,11 @@ function AddComment({ asin, loadComments }) {
           body: JSON.stringify(formValue),
         }
       );
-      if (response.ok) {
-        loadComments();
-        setFormValue(initialFormState);
+      if (response.ok) {        
         setAlert('Comment successfully added!');
         setModal(!false)
+        setFormValue(initialFormState);
+        loadComments();
       } else {
         setAlert('Unable to add the comment!');
         setModal(!false)
@@ -93,7 +88,6 @@ function AddComment({ asin, loadComments }) {
         </div>
       </Form>
     </div>
-    <ModalMessage alert={alert} modal={modal} closeModal={() => closeModal()}/>
     </>
   );
 }

@@ -1,10 +1,11 @@
 import SingleBook from "./SingleBook";
-import {Row, Container, Col} from "react-bootstrap/";
-import { useState } from "react";
 import CommentArea from "./CommentArea";
-
+import { ThemeContext } from "../context/ThemeContextProvider";
+import {Row, Container, Col} from "react-bootstrap/";
+import { useState, useContext } from "react";
 
 function AllTheBooks({filterBook}) {
+  const {theme} = useContext(ThemeContext)
   const [bookSelected, setBookSelected] = useState(null);
   const selected = (asin) => {
     if (bookSelected === asin) {
@@ -16,7 +17,7 @@ function AllTheBooks({filterBook}) {
 
   return (
     <>
-      <Container className="mb-5">
+      <Container fluid className={theme ==="light" ? "" : "bg-dark marginTopDark" } data-bs-theme={theme} >
         <Row>
           <Col md={8} >
           <Row className="gy-4">

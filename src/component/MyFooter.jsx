@@ -1,11 +1,12 @@
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import { Container } from "react-bootstrap";
-import "./css/style.css"
+import { Container, Row, Col } from "react-bootstrap";
+import { ThemeContext } from "../context/ThemeContextProvider";
+import { useContext } from "react";
 
 function MyFooter() {
+  const {theme} = useContext(ThemeContext)
+
   return (
-    <Container fluid className="mt-3 mb-0 footer">
+    <Container fluid className={theme === 'light' ? 'footerLight mt-4' : 'footerDark bg-dark'}>
       <Row className="justify-content-center py-3">
         <Col xs={12} sm={4} className="text-center">
           Epicbook Bookshop srl - Viale Abruzzi, 100 20133 Milano

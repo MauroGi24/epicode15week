@@ -11,7 +11,7 @@ function SingleBook({book, selected, bookSelected}) {
     <>
       <Col sm={12} md={4} lg={3}>
         <Card className={theme === 'light'? 'h-100 bookCard' : 'bg-dark h-100 bookCard bookCardBlack'} data-bs-theme={theme}>
-          <Card.Img
+          <Card.Img data-testid='card-img'
             className={bookSelected===book.asin ? "borderRed" : ""}
             onClick={() => selected(book.asin) }
             variant="top"

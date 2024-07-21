@@ -3,12 +3,13 @@ import { Button, Form } from "react-bootstrap";
 import { useState, useContext } from "react";
 
 function AddComment({ asin, loadComments }) {
+  const {setAlert, setModal} = useContext(ModalContext)
   const initialFormState = {
     rate: "",
     comment: "",
     elementId: asin,
   };
-
+  
   const [formValue, setFormValue] = useState(initialFormState);
 
   const handleChange = (event) => {
@@ -18,8 +19,6 @@ function AddComment({ asin, loadComments }) {
       [name]: value,
     });
   };
-
-  const {setAlert, setModal} = useContext(ModalContext)
 
   const saveComment = async () => {
     try {
